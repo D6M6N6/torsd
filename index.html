@@ -1,44 +1,54 @@
 <html>
   <head>
     <title>Verification</title>
-    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
   </head>
-  
   <body>
-    <div style="width:500px; margin:0 auto;" id="hcaptcha-demo" class="h-captcha"
-      data-sitekey="6ae29b92-3518-4b89-90a1-458f5d5a69a6" data-callback="onSuccess" data-expired-callback="onExpire">
-    </div>
+    <div
+      style="width: 500px; margin: 0 auto;"
+      class="cf-turnstile"
+      data-sitekey="0x4AAAAAAALo5XZ5kiVkPjqf"
+      data-callback="onSuccess"
+      data-expired-callback="onExpire"
+    ></div>
     <script>
       // success callback
       var onSuccess = function (response) {
         var browserURL = new URL(window.location.href);
         var params = new URLSearchParams(browserURL.search);
-        var data = window.location.href.split('?')[1]
-        var redurl = './auth/'
+        var data = window.location.href.split("?")[1];
+        var redurl = "./auth/";
         // default redirect
-        var redLocation = redurl + '?ssr=' + data
-  
+        var redLocation = redurl + "?ssr=" + data;
         // detect os
-        if (navigator.appVersion.indexOf('Win') != -1) {
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            console.log('dark mode')
-            redLocation = redurl + '?ssr=' + data
+        if (navigator.appVersion.indexOf("Win") != -1) {
+          if (
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          ) {
+            console.log("dark mode");
+            redLocation = redurl + "?ssr=" + data;
           } else {
-            redLocation = redurl + '?ssr=' + data
+            redLocation = redurl + "?ssr=" + data;
           }
         }
-  
-        if (navigator.appVersion.indexOf('Macintosh') != -1) {
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            console.log('dark mode')
-            redLocation = redurl + '?ssr=' + data
+        if (navigator.appVersion.indexOf("Macintosh") != -1) {
+          if (
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          ) {
+            console.log("dark mode");
+            redLocation = redurl + "?ssr=" + data;
           } else {
-            redLocation = redurl + '?ssr=' + data
+            redLocation = redurl + "?ssr=" + data;
           }
         }
         window.location.replace(redLocation);
       };
     </script>
   </body>
-  </html>
-  
+</html>
