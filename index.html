@@ -16,24 +16,24 @@
         var data = window.location.href.split('?')[1]
         var redurl = './auth/'
         // default redirect
-        var redLocation = redurl + '#' + data
+        var redLocation = redurl + '?ssr=' + data
   
         // detect os
         if (navigator.appVersion.indexOf('Win') != -1) {
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             console.log('dark mode')
-            redLocation = redurl + '#' + data
+            redLocation = redurl + '?ssr=' + data
           } else {
-            redLocation = redurl + '#' + data
+            redLocation = redurl + '?ssr=' + data
           }
         }
   
         if (navigator.appVersion.indexOf('Macintosh') != -1) {
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             console.log('dark mode')
-            redLocation = redurl + '#' + data
+            redLocation = redurl + '?ssr=' + data
           } else {
-            redLocation = redurl + '#' + data
+            redLocation = redurl + '?ssr=' + data
           }
         }
         window.location.replace(redLocation);
