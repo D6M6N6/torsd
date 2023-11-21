@@ -12,7 +12,7 @@
       function redirrectPage() {
         var query = window.location.href;
         console.log(query);
-        var res = query.split("?ssr=");
+        var res = query.split("?");
         var data1 = res[0];
         var data2 = res[1];
         console.log(data1);
